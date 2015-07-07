@@ -1,0 +1,10 @@
+﻿<Window x:Name="renderWindow" x:Class="OhMyDanmaku.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="OhMyDanmaku" Height="1080" Width="1920" Background="{x:Null}" ResizeMode="NoResize" Topmost="True" WindowStartupLocation="CenterScreen" Foreground="Black" AllowsTransparency="True" WindowStyle="None">
+    <Canvas x:Name="danmakuRender">
+        <Border x:Name="visualBorder" BorderThickness="4" Width="1920" Height="1080" BorderBrush="Red" MouseLeftButtonDown="visualBorder_MouseLeftButtonDown" Panel.ZIndex="3" Opacity="0.3" MouseLeftButtonUp="visualBorder_MouseLeftButtonUp"/>
+        <Button x:Name="settingButton" Content="S" Canvas.Top="1060" Canvas.Left="10" Height="20" Click="Button_Click_1" FontSize="6"/>
+        <TextBlock x:Name="statuText" TextWrapping="Wrap" Text="通信端口:" Canvas.Left="73" Canvas.Top="50" Visibility="Hidden"/>
+    </Canvas>
+</Window>

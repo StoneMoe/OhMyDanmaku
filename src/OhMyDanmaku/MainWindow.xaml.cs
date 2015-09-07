@@ -232,7 +232,9 @@ namespace OhMyDanmaku
                     remote = (EndPoint)client;
                     num = 0;
 
-                    sendDanmaku(recvmsg);
+                    Thread temp = new Thread(() => sendDanmaku(recvmsg));
+                    temp.IsBackground = true;
+                    temp.Start();
 
                 }
                 catch (ThreadAbortException)

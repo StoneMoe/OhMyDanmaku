@@ -1,0 +1,77 @@
+<html>
+	<head>
+		<title>OhMyDanmaku Web DEMO</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, inital-scale=1" /><!--For Mobile Browsers Display-->
+		<style>
+			* {
+				font-family: "Hiragino Sans GB", "Microsoft YaHei", Helvetica, Arial;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+			}
+			body {
+				width: 100%;
+				height: 100%;
+				padding: 0;
+				margin: 0;
+			}
+			input[type='text']{
+				padding: 5px 10px 5px 10px;
+				border-radius: 3px;
+				font-size: 1.1em;
+				text-align: center;
+				width: 60%;
+				border: 1px solid #666666;
+				transition: all 0.5s ease;
+				outline: none;
+			}
+			input[type='text']:hover{
+				box-shadow: 0px 0px 5px 0.5px #66CCFF;
+			}
+			input[type='text']:focus{
+				box-shadow: 0px 0px 5px 0.5px #66CCFF;
+				width: 95%;
+			}
+			p{
+				font-size: 0.7em;
+				color: #999999;
+			}
+			button{
+				border: 1px solid #666666;
+				border-radius: 3px;
+				background-color: #FFF;
+				padding: 8px 20px 8px 20px;
+				transition: all 0.3s ease;
+				cursor: hand;
+				outline: none;
+			}
+			button:hover{
+				background: #AAA;
+				color: #FFF;
+			}
+		</style>
+		<script>
+			function send(){
+				var request = new XMLHttpRequest();
+				request.open('POST', '/proxy.php', true);
+				request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+				request.send("danmaku=" + document.getElementById('danmaku').value);
+
+				document.getElementById('danmaku').value = "";
+			}
+		</script>
+	</head>
+
+	<body>
+		<center>
+			<br>
+			<br>
+			<br>
+			<h3 style="margin-bottom:0px;">( ·ω·)/~ This is a Proxy Sample</h2>
+			<p>http://github.com/LakeChan/OhMyDanmaku</p>
+			<br>
+			<input type="text" id="danmaku" placeholder="Enter your words here"><br><br>
+			<button onclick="javascript:send()">Fire it !</button>
+		</center>
+	</body>
+</html>

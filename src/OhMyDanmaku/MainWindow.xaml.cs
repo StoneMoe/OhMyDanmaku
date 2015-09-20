@@ -285,19 +285,11 @@ namespace OhMyDanmaku
 
         private void sendDanmaku(string _content)
         {
-            if (_content.Trim() == string.Empty)
-            {
-                Console.WriteLine("Empty Danmaku,Skip");
-                return;
-            }
-
-            string msg = _content.Replace("\\","\\\\"); //a simple filter
-
             int row = getAvailableRow();
             this.Dispatcher.Invoke(new Action(() =>
             {
                 createDanmaku(
-                    msg,
+                    _content,
                     row,
                     _system_danmaku_rowHeight,
                     GlobalVariable._user_danmaku_FontSize,

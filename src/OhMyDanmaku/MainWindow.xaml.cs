@@ -25,6 +25,8 @@ namespace OhMyDanmaku
 
         Thread t;
 
+        Audit auditWindow = null;
+
         public double _SCREEN_WIDTH = SystemParameters.PrimaryScreenWidth;
         public double _SCREEN_HEIGHT = SystemParameters.PrimaryScreenHeight;
 
@@ -205,7 +207,7 @@ namespace OhMyDanmaku
 
         #region Communication
 
-        private void networkComLoop(int _port)
+        private void networkComLoop(int _port, bool audit)
         {
             Console.WriteLine("communication Thread is Starting..\r\nSocket Listen Port:" + GlobalVariable._user_com_port.ToString());
 
@@ -227,15 +229,27 @@ namespace OhMyDanmaku
 
                     string recvmsg = System.Text.Encoding.UTF8.GetString(buffer, 0, num);
 
-                    Console.WriteLine(recvmsg);
-
                     remote = (EndPoint)client;
                     num = 0;
 
-                    Thread temp = new Thread(() => sendDanmaku(recvmsg));
-                    temp.IsBackground = true;
-                    temp.Start();
+                    //Basically Filter
+                    recvmsg = recvmsg.Replace("\\", "\\\\");
+                    recvmsg = recvmsg.Trim();
+                    if (recvmsg == string.Empty)
+                    {
+                        continue;
+                    }
 
+                    if (audit)
+                    {
+                        auditWindow.addToAuditList(recvmsg);
+                    }
+                    else
+                    {
+                        Thread temp = new Thread(() => sendDanmaku(recvmsg));
+                        temp.IsBackground = true;
+                        temp.Start();
+                    }
                 }
                 catch (ThreadAbortException)
                 {
@@ -266,8 +280,13 @@ namespace OhMyDanmaku
 
             preventCoverInit(GlobalVariable._RENDER_HEIGHT, GlobalVariable._user_danmaku_FontSize); //init prevent cover system
 
+            if (GlobalVariable._user_audit)
+            {
+                auditWindow = new Audit(this);
+                auditWindow.Show();
+            }
 
-            t = new Thread(() => networkComLoop(GlobalVariable._user_com_port));
+            t = new Thread(() => networkComLoop(GlobalVariable._user_com_port, GlobalVariable._user_audit));
             t.IsBackground = true;
             t.Name = "CommunicationThread_" + getRandomString(5);
             t.Start(); //Start listener thread
@@ -280,7 +299,7 @@ namespace OhMyDanmaku
             createDanmaku("OhMyDanmaku Initialization Complete", 1, _system_danmaku_rowHeight, GlobalVariable._user_danmaku_FontSize, GlobalVariable._user_danmaku_Duration, GlobalVariable._user_danmaku_colorR, GlobalVariable._user_danmaku_colorG, GlobalVariable._user_danmaku_colorB, GlobalVariable._user_danmaku_EnableShadow);
         }
 
-        private void sendDanmaku(string _content)
+        public void sendDanmaku(string _content)
         {
             int row = getAvailableRow();
             this.Dispatcher.Invoke(new Action(() =>
@@ -307,6 +326,13 @@ namespace OhMyDanmaku
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             shutdownNetworkComLoop();
+
+            //close Audit window
+            if (auditWindow != null)
+            {
+                auditWindow.Close();
+                auditWindow = null;
+            }
 
             Window sw = new Settings();
             sw.ShowDialog();
@@ -366,6 +392,8 @@ namespace OhMyDanmaku
             GlobalVariable._user_danmaku_colorB = 255;
 
             GlobalVariable._user_com_port = 8585;
+
+            GlobalVariable._user_audit = false;
         }
 
         #endregion

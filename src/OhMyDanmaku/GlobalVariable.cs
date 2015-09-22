@@ -17,5 +17,6 @@
 
         //Communication - User Settings
         public static int _user_com_port;
+        public static bool _user_audit;
     }
 }

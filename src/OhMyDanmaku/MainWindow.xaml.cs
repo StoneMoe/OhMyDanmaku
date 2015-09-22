@@ -25,6 +25,8 @@ namespace OhMyDanmaku
 
         Thread t;
 
+        Audit auditWindow;
+
         public double _SCREEN_WIDTH = SystemParameters.PrimaryScreenWidth;
         public double _SCREEN_HEIGHT = SystemParameters.PrimaryScreenHeight;
 
@@ -266,6 +268,16 @@ namespace OhMyDanmaku
 
             preventCoverInit(GlobalVariable._RENDER_HEIGHT, GlobalVariable._user_danmaku_FontSize); //init prevent cover system
 
+            if (GlobalVariable._user_audit)
+            {
+                auditWindow = new Audit();
+                auditWindow.Show();
+            }
+            else
+            {
+                auditWindow = new Audit();
+                auditWindow.Close();
+            }
 
             t = new Thread(() => networkComLoop(GlobalVariable._user_com_port, GlobalVariable._user_audit));
             t.IsBackground = true;

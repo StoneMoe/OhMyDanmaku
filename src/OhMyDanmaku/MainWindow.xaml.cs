@@ -271,9 +271,6 @@ namespace OhMyDanmaku
             t.IsBackground = true;
             t.Name = "CommunicationThread_" + getRandomString(5);
             t.Start(); //Start listener thread
-
-
-            statuText.Text = "Listen Port:" + GlobalVariable._user_com_port.ToString(); //Show listen port to statuText
         }
 
         private void InitCompleted()
@@ -319,13 +316,7 @@ namespace OhMyDanmaku
 
         private void visualBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            statuText.Visibility = Visibility.Visible;
             this.DragMove();
-        }
-
-        private void visualBorder_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            statuText.Visibility = Visibility.Hidden;
         }
         #endregion
 
@@ -359,11 +350,6 @@ namespace OhMyDanmaku
             //Setting Button postion
             settingButton.SetValue(Canvas.TopProperty, (double)0);
             settingButton.SetValue(Canvas.LeftProperty, (double)0);
-
-            //StatuText position
-            statuText.SetValue(Canvas.TopProperty, (double)20);
-            statuText.SetValue(Canvas.LeftProperty, (double)0);
-
         }
 
         public void loadDefaultConfig()

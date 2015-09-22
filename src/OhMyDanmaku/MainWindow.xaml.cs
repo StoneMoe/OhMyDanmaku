@@ -273,7 +273,7 @@ namespace OhMyDanmaku
             t.Start(); //Start listener thread
 
 
-            statuText.Text = "Port:" + GlobalVariable._user_com_port.ToString(); //Show listen port to statuText
+            statuText.Text = "Listen Port:" + GlobalVariable._user_com_port.ToString(); //Show listen port to statuText
         }
 
         private void InitCompleted()
@@ -361,8 +361,8 @@ namespace OhMyDanmaku
             settingButton.SetValue(Canvas.LeftProperty, (double)0);
 
             //StatuText position
-            statuText.SetValue(Canvas.TopProperty, (double)0);
-            statuText.SetValue(Canvas.LeftProperty, (double)20);
+            statuText.SetValue(Canvas.TopProperty, (double)20);
+            statuText.SetValue(Canvas.LeftProperty, (double)0);
 
         }
 

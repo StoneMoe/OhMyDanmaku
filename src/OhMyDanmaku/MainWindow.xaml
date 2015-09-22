@@ -5,6 +5,6 @@
     <Canvas x:Name="danmakuRender">
         <Border x:Name="visualBorder" BorderThickness="4" Width="1920" Height="1080" BorderBrush="Red" MouseLeftButtonDown="visualBorder_MouseLeftButtonDown" Panel.ZIndex="3" Opacity="0.3" MouseLeftButtonUp="visualBorder_MouseLeftButtonUp"/>
         <Button x:Name="settingButton" Content="Setting" Canvas.Top="10" Canvas.Left="10" Height="20" Click="Button_Click_1" FontSize="6"/>
-        <TextBlock x:Name="statuText" TextWrapping="Wrap" Text="通信端口:" Canvas.Left="73" Canvas.Top="50" Visibility="Hidden"/>
+        <TextBlock x:Name="statuText" TextWrapping="Wrap" Text="Listen Port:" Canvas.Left="73" Canvas.Top="50" Visibility="Hidden" FontSize="30"/>
     </Canvas>
 </Window>

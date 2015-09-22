@@ -282,7 +282,7 @@ namespace OhMyDanmaku
 
             if (GlobalVariable._user_audit)
             {
-                auditWindow = new Audit();
+                auditWindow = new Audit(this);
                 auditWindow.Show();
             }
 
@@ -302,7 +302,7 @@ namespace OhMyDanmaku
             createDanmaku("OhMyDanmaku Initialization Complete", 1, _system_danmaku_rowHeight, GlobalVariable._user_danmaku_FontSize, GlobalVariable._user_danmaku_Duration, GlobalVariable._user_danmaku_colorR, GlobalVariable._user_danmaku_colorG, GlobalVariable._user_danmaku_colorB, GlobalVariable._user_danmaku_EnableShadow);
         }
 
-        private void sendDanmaku(string _content)
+        public void sendDanmaku(string _content)
         {
             int row = getAvailableRow();
             this.Dispatcher.Invoke(new Action(() =>

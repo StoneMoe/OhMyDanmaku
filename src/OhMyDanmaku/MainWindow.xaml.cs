@@ -232,6 +232,14 @@ namespace OhMyDanmaku
                     remote = (EndPoint)client;
                     num = 0;
 
+                    //Basically Filter
+                    recvmsg = recvmsg.Replace("\\", "\\\\");
+                    recvmsg = recvmsg.Trim();
+                    if (recvmsg == string.Empty)
+                    {
+                        continue;
+                    }
+
                     if (audit)
                     {
                         auditWindow.addToAuditList(recvmsg);

@@ -52,11 +52,13 @@ namespace OhMyDanmaku
             {
                 MessageBox.Show("存在无效的值, 部分设置将不会生效\r\n\r\nInput value Invalid,Some setting won't change");
             }
-            
-            if (Convert.ToInt32(com_port.Text) > 65535 || Convert.ToInt32(com_port.Text) < 1) {
+
+            if (Convert.ToInt32(com_port.Text) > 65535 || Convert.ToInt32(com_port.Text) < 1)
+            {
                 MessageBox.Show("端口无效, 端口设置将不会改变\r\n\r\nPort Invalid, port will not change");
             }
-            else {
+            else
+            {
                 GlobalVariable._user_com_port = Convert.ToInt32(com_port.Text);
             }
 

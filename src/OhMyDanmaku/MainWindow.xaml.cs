@@ -205,7 +205,7 @@ namespace OhMyDanmaku
 
         #region Communication
 
-        private void networkComLoop(int _port)
+        private void networkComLoop(int _port, bool audit)
         {
             Console.WriteLine("communication Thread is Starting..\r\nSocket Listen Port:" + GlobalVariable._user_com_port.ToString());
 
@@ -267,7 +267,7 @@ namespace OhMyDanmaku
             preventCoverInit(GlobalVariable._RENDER_HEIGHT, GlobalVariable._user_danmaku_FontSize); //init prevent cover system
 
 
-            t = new Thread(() => networkComLoop(GlobalVariable._user_com_port));
+            t = new Thread(() => networkComLoop(GlobalVariable._user_com_port, GlobalVariable._user_audit));
             t.IsBackground = true;
             t.Name = "CommunicationThread_" + getRandomString(5);
             t.Start(); //Start listener thread
@@ -380,6 +380,8 @@ namespace OhMyDanmaku
             GlobalVariable._user_danmaku_colorB = 255;
 
             GlobalVariable._user_com_port = 8585;
+
+            GlobalVariable._user_audit = false;
         }
 
         #endregion

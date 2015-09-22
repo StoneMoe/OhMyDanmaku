@@ -26,6 +26,7 @@ namespace OhMyDanmaku
             danmaku_G.Text = GlobalVariable._user_danmaku_colorG.ToString();
             danmaku_B.Text = GlobalVariable._user_danmaku_colorB.ToString();
             danmaku_shadow.IsChecked = GlobalVariable._user_danmaku_EnableShadow;
+            audit_mode.IsChecked = GlobalVariable._user_audit;
 
             com_port.Text = GlobalVariable._user_com_port.ToString();
         }
@@ -44,6 +45,8 @@ namespace OhMyDanmaku
                 GlobalVariable._user_danmaku_colorB = Convert.ToByte(danmaku_B.Text);
 
                 GlobalVariable._user_danmaku_EnableShadow = danmaku_shadow.IsChecked.Value;
+
+                GlobalVariable._user_audit = audit_mode.IsChecked.Value;
             }
             catch (Exception)
             {

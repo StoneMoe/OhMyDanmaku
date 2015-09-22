@@ -25,7 +25,7 @@ namespace OhMyDanmaku
 
         Thread t;
 
-        Audit auditWindow;
+        Audit auditWindow = null;
 
         public double _SCREEN_WIDTH = SystemParameters.PrimaryScreenWidth;
         public double _SCREEN_HEIGHT = SystemParameters.PrimaryScreenHeight;
@@ -273,11 +273,6 @@ namespace OhMyDanmaku
                 auditWindow = new Audit();
                 auditWindow.Show();
             }
-            else
-            {
-                auditWindow = new Audit();
-                auditWindow.Close();
-            }
 
             t = new Thread(() => networkComLoop(GlobalVariable._user_com_port, GlobalVariable._user_audit));
             t.IsBackground = true;
@@ -322,6 +317,13 @@ namespace OhMyDanmaku
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             shutdownNetworkComLoop();
+
+            //close Audit window
+            if (auditWindow != null)
+            {
+                auditWindow.Close();
+                auditWindow = null;
+            }
 
             Window sw = new Settings();
             sw.ShowDialog();

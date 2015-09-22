@@ -1,0 +1,11 @@
+﻿<Window x:Class="OhMyDanmaku.Audit"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Realtime Audit" Height="350" Width="500">
+    <Grid>
+        <ListBox HorizontalAlignment="Left" Height="180" Margin="10,10,0,0" VerticalAlignment="Top" Width="472"/>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Current Danmaku" VerticalAlignment="Top" Margin="10,195,0,0" Height="45" Width="472" TextAlignment="Center"/>
+        <Button Content="Pass" HorizontalAlignment="Left" Height="64" Margin="10,245,0,0" VerticalAlignment="Top" Width="229" FontSize="15" Background="#FF00CC66" BorderBrush="{x:Null}" Foreground="White"/>
+        <Button Content="Drop" HorizontalAlignment="Left" Height="64" Margin="253,245,0,0" VerticalAlignment="Top" Width="229" FontSize="15" Background="#FFFF3333" BorderBrush="{x:Null}" Foreground="White"/>
+    </Grid>
+</Window>

@@ -4,10 +4,10 @@
         Title="Realtime Audit" Height="350" Width="500" WindowStyle="None" MouseDown="Window_MouseDown" ResizeMode="NoResize" Background="#FF666666" Topmost="True">
     <Grid>
         <ListBox x:Name="AuditList" HorizontalAlignment="Left" Height="180" Margin="10,10,0,0" VerticalAlignment="Top" Width="472" Background="#FF666666" BorderBrush="White" Foreground="White"/>
-        <TextBlock x:Name="currentDanmaku" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Current Auditing" VerticalAlignment="Top" Margin="10,195,0,0" Height="43" Width="472" TextAlignment="Center" Foreground="White"/>
-        <Button Content="Pass" HorizontalAlignment="Left" Height="64" Margin="10,268,0,0" VerticalAlignment="Top" Width="229" FontSize="15" Background="#FF00CC66" BorderBrush="{x:Null}" Foreground="White"/>
-        <Button Content="Drop" Height="64" Margin="253,268,10,0" VerticalAlignment="Top" FontSize="15" Background="#FFFF3333" BorderBrush="{x:Null}" Foreground="White"/>
-        <Button Content="Pass ALL" HorizontalAlignment="Left" Height="20" Margin="10,243,0,0" VerticalAlignment="Top" Width="229" Background="#FF00CC66" BorderBrush="{x:Null}" Foreground="White"/>
-        <Button Content="Drop ALL" Height="20" Margin="253,243,10,0" VerticalAlignment="Top" Background="#FFFF3333" BorderBrush="{x:Null}" Foreground="White"/>
+        <TextBlock x:Name="currentDanmaku" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,195,0,0" Height="43" Width="472" TextAlignment="Center" Foreground="White"/>
+        <Button x:Name="passButton" Content="Pass" HorizontalAlignment="Left" Height="64" Margin="10,268,0,0" VerticalAlignment="Top" Width="229" FontSize="15" Background="#FF00CC66" BorderBrush="{x:Null}" Foreground="White" Click="passButton_Click"/>
+        <Button x:Name="dropButton" Content="Drop" Height="64" Margin="253,268,10,0" VerticalAlignment="Top" FontSize="15" Background="#FFFF3333" BorderBrush="{x:Null}" Foreground="White" Click="dropButton_Click"/>
+        <Button x:Name="passAllButton" Content="Pass ALL" HorizontalAlignment="Left" Height="20" Margin="10,243,0,0" VerticalAlignment="Top" Width="229" Background="#FF00CC66" BorderBrush="{x:Null}" Foreground="White"/>
+        <Button x:Name="dropAllButton" Content="Drop ALL" Height="20" Margin="253,243,10,0" VerticalAlignment="Top" Background="#FFFF3333" BorderBrush="{x:Null}" Foreground="White"/>
     </Grid>
 </Window>

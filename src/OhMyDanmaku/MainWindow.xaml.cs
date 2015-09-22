@@ -229,15 +229,19 @@ namespace OhMyDanmaku
 
                     string recvmsg = System.Text.Encoding.UTF8.GetString(buffer, 0, num);
 
-                    Console.WriteLine(recvmsg);
-
                     remote = (EndPoint)client;
                     num = 0;
 
-                    Thread temp = new Thread(() => sendDanmaku(recvmsg));
-                    temp.IsBackground = true;
-                    temp.Start();
-
+                    if (audit)
+                    {
+                        auditWindow.addToAuditList(recvmsg);
+                    }
+                    else
+                    {
+                        Thread temp = new Thread(() => sendDanmaku(recvmsg));
+                        temp.IsBackground = true;
+                        temp.Start();
+                    }
                 }
                 catch (ThreadAbortException)
                 {

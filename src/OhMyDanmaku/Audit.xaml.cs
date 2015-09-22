@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
 
 namespace OhMyDanmaku
@@ -11,6 +12,14 @@ namespace OhMyDanmaku
         public Audit()
         {
             InitializeComponent();
+        }
+
+        public void addToAuditList(string content)
+        {
+            this.Dispatcher.Invoke(new Action(() => {
+                AuditList.Items.Add(content);
+            }));
+            
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)

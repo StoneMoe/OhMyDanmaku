@@ -64,9 +64,7 @@ namespace OhMyDanmaku
         private void setButtons(bool on)
         {
             passButton.IsEnabled = on;
-            passAllButton.IsEnabled = on;
             dropButton.IsEnabled = on;
-            dropAllButton.IsEnabled = on;
         }
 
         private void dropButton_Click(object sender, RoutedEventArgs e)

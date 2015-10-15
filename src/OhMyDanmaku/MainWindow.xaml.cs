@@ -40,17 +40,17 @@ namespace OhMyDanmaku
             OhMyDanmaku_Init(); //start init process with default config
         }
 
-        #region Communication
+        #region Network
 
-        private void networkComLoop(int _port, bool audit)
+        private void networkListenLoop(int _port, bool audit)
         {
-            Console.WriteLine("communication Thread is Starting..\r\nSocket Listen Port:" + GlobalVariable._user_com_port.ToString());
+            Console.WriteLine("Network Thread is Starting.. Listen on:" + GlobalVariable._user_com_port.ToString());
 
             networkSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             IPEndPoint ip = new IPEndPoint(IPAddress.Loopback, _port);
 
-            byte[] buffer = new byte[2048];
-
+            byte[] buffer = new byte[102400];
+            int dataLength;
             networkSocket.Bind(ip);
 
             IPEndPoint client = new IPEndPoint(IPAddress.Any, 0);
@@ -60,29 +60,13 @@ namespace OhMyDanmaku
             {
                 try
                 {
-                    int num = networkSocket.ReceiveFrom(buffer, ref remote);
+                    dataLength = networkSocket.ReceiveFrom(buffer, ref remote);
 
-                    string recvmsg = System.Text.Encoding.UTF8.GetString(buffer, 0, num);
+                    Thread temp = new Thread(() => { msgHandler(buffer, dataLength, audit); });
+                    temp.IsBackground = true;
+                    temp.Start();
 
                     remote = (EndPoint)client;
-                    num = 0;
-
-                    //Basically Filter
-                    recvmsg = recvmsg.Replace("\\", "\\\\");
-                    recvmsg = recvmsg.Trim();
-                    if (recvmsg == string.Empty)
-                    {
-                        continue;
-                    }
-
-                    if (audit)
-                    {
-                        auditWindow.addToAuditList(recvmsg);
-                    }
-                    else
-                    {
-                        this.Dispatcher.Invoke(new Action(() => sendDanmaku(recvmsg)));
-                    }
                 }
                 catch (ThreadAbortException)
                 {
@@ -92,6 +76,24 @@ namespace OhMyDanmaku
                 {
                     Console.WriteLine("Unknown Exception: \r\n" + e.ToString());
                 }
+            }
+        }
+
+        private void msgHandler(byte[] buffer, int bufferLength, bool audit)
+        {
+            string msg = System.Text.Encoding.UTF8.GetString(buffer, 0, bufferLength).Replace("\\", "\\\\").Trim();
+            if (msg == string.Empty)
+            {
+                return;
+            }
+
+            if (audit)
+            {
+                auditWindow.addToAuditList(msg);
+            }
+            else
+            {
+                this.Dispatcher.Invoke(new Action(() => sendDanmaku(msg)));
             }
         }
 
@@ -109,15 +111,15 @@ namespace OhMyDanmaku
             setSize(GlobalVariable._RENDER_WIDTH, GlobalVariable._RENDER_HEIGHT);
 
             lib = new wpfDanmakulib(
-                danmakuRender, 
+                danmakuRender,
                 ra,
                 true,
-                InitCompleted, 
-                GlobalVariable._user_danmaku_Duration, 
-                GlobalVariable._user_danmaku_FontSize, 
-                GlobalVariable._user_danmaku_EnableShadow, 
-                GlobalVariable._user_danmaku_colorR, 
-                GlobalVariable._user_danmaku_colorG, 
+                InitCompleted,
+                GlobalVariable._user_danmaku_Duration,
+                GlobalVariable._user_danmaku_FontSize,
+                GlobalVariable._user_danmaku_EnableShadow,
+                GlobalVariable._user_danmaku_colorR,
+                GlobalVariable._user_danmaku_colorG,
                 GlobalVariable._user_danmaku_colorB
                 );
 
@@ -127,7 +129,7 @@ namespace OhMyDanmaku
                 auditWindow.Show();
             }
 
-            networkThread = new Thread(() => networkComLoop(GlobalVariable._user_com_port, GlobalVariable._user_audit));
+            networkThread = new Thread(() => networkListenLoop(GlobalVariable._user_com_port, GlobalVariable._user_audit));
             networkThread.IsBackground = true;
             networkThread.Name = "CommunicationThread";
             networkThread.Start(); //Start listener thread

@@ -31,7 +31,7 @@ namespace OhMyDanmaku
 
         //Auto Prevent Cover System
         private bool[] _rowList;
-        private ArrayList idleRows = new ArrayList();
+        private ArrayList idleRows;
 
         //Helper
         private string getRandomString(int _Length)
@@ -263,6 +263,7 @@ namespace OhMyDanmaku
         private void preventCoverInit(initCompleteHandler initCompleted)
         {
             _rowList = new bool[_maxRow]; //init a row list for recording row status
+            idleRows = new ArrayList();
             initCompleted();
         }
         private int getAvailableRow()

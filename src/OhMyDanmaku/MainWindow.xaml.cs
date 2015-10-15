@@ -81,9 +81,7 @@ namespace OhMyDanmaku
                     }
                     else
                     {
-                        Thread temp = new Thread(() => sendDanmaku(recvmsg));
-                        temp.IsBackground = true;
-                        temp.Start();
+                        this.Dispatcher.Invoke(new Action(() => sendDanmaku(recvmsg)));
                     }
                 }
                 catch (ThreadAbortException)

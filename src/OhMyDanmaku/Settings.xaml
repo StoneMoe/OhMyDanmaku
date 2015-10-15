@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="OhMyDanmaku 设置" Height="350" Width="291" Loaded="Window_Loaded" ShowInTaskbar="False" Topmost="True" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None" MouseDown="Window_MouseDown">
     <Grid>
+        <Border BorderBrush="#FF0097FF" Width="291" Height="350" BorderThickness="2"/>
         <Label Content="Danmaku Size" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
-        <Button Content="Apply" Margin="13,318,13,0" VerticalAlignment="Top" Click="Button_Click" Height="22"/>
+        <Button Content="Apply" Margin="13,0,13,10" VerticalAlignment="Bottom" Click="Button_Click" Height="22"/>
         <Label Content="Render Size" HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top"/>
         <Label Content="Duration" HorizontalAlignment="Left" Margin="10,102,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="danmaku_shadow" Content="Enable Danmaku Shadow" HorizontalAlignment="Left" Margin="10,171,0,0" VerticalAlignment="Top"/>

@@ -91,12 +91,6 @@ namespace OhMyDanmaku
                 this.Dispatcher.Invoke(new Action(() => sendDanmaku(msg)));
             }
         }
-
-        private void shutdownNetworkComLoop()
-        {
-            networkThread.Abort();
-            networkSocket.Close();
-        }
         #endregion
 
         #region Entrys
@@ -148,9 +142,12 @@ namespace OhMyDanmaku
 
         private void Setting_Click(object sender, RoutedEventArgs e)
         {
-            shutdownNetworkComLoop();
+            if (networkThread != null)
+            {
+                networkThread.Abort();
+                networkSocket.Close();
+            }
 
-            //close Audit window
             if (auditWindow != null)
             {
                 auditWindow.Close();

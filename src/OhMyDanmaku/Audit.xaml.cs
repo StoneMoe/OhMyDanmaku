@@ -28,11 +28,31 @@ namespace OhMyDanmaku
                 else
                 {
                     AuditList.Items.Add(content);
-
                 }
             }));
         }
 
+        #region Events
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.DragMove();
+            }
+        }
+
+        private void passButton_Click(object sender, RoutedEventArgs e)
+        {
+            mw.sendDanmaku(currentDanmaku.Text);
+            getADanmaku();
+        }
+        private void dropButton_Click(object sender, RoutedEventArgs e)
+        {
+            getADanmaku();
+        }
+        #endregion
+
+        #region Helpers
         private void getADanmaku()
         {
             if (AuditList.Items.Count == 0)
@@ -47,29 +67,11 @@ namespace OhMyDanmaku
             }
         }
 
-        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                this.DragMove();
-            }
-        }
-
-        private void passButton_Click(object sender, RoutedEventArgs e)
-        {
-            mw.sendDanmaku(currentDanmaku.Text);
-            getADanmaku();
-        }
-
         private void setButtons(bool on)
         {
             passButton.IsEnabled = on;
             dropButton.IsEnabled = on;
         }
-
-        private void dropButton_Click(object sender, RoutedEventArgs e)
-        {
-            getADanmaku();
-        }
+        #endregion
     }
 }

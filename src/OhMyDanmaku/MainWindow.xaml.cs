@@ -81,7 +81,7 @@ namespace OhMyDanmaku
                     }
                     else
                     {
-                        Thread temp = new Thread(() => lib.generateDanmaku(recvmsg));
+                        Thread temp = new Thread(() => sendDanmaku(recvmsg));
                         temp.IsBackground = true;
                         temp.Start();
                     }
@@ -112,14 +112,15 @@ namespace OhMyDanmaku
 
             lib = new wpfDanmakulib(
                 danmakuRender, 
+                ra,
+                true,
                 InitCompleted, 
                 GlobalVariable._user_danmaku_Duration, 
                 GlobalVariable._user_danmaku_FontSize, 
                 GlobalVariable._user_danmaku_EnableShadow, 
                 GlobalVariable._user_danmaku_colorR, 
                 GlobalVariable._user_danmaku_colorG, 
-                GlobalVariable._user_danmaku_colorB, 
-                true
+                GlobalVariable._user_danmaku_colorB
                 );
 
             if (GlobalVariable._user_audit)

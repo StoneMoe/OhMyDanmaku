@@ -12,12 +12,10 @@ namespace OhMyDanmaku
     {
         #region general
         //Init
-        private Random ra = new Random();
-        private Canvas danmakuRender;
-        private bool enablePreventCoverSystem;
+        private Random ra;
+        private Canvas system_RenderCanvas;
+        private bool system_enableAPCS;
         public delegate void initCompleteHandler();
-        private double Canvas_Width;
-        private double Canvas_Height;
 
         //Danmaku Style Config
         private int danmaku_Duration;
@@ -47,25 +45,32 @@ namespace OhMyDanmaku
             return _buffer;
         }
         #endregion
+
         /// <summary>
         /// wpfDanmakulib initialization Entry point
         /// </summary>
-        /// <param name="c">A WPF Canvas for generating danmaku</param>
-        /// <param name="final">Delegate a method when wpfDanmakulib initialization completed</param>
-        /// <param name="Duration">Default danmaku style</param>
-        /// <param name="FontSize">Default danmaku style</param>
-        /// <param name="Shadow">Default danmaku style</param>
-        /// <param name="ColorR">Default danmaku style</param>
-        /// <param name="ColorG">Default danmaku style</param>
-        /// <param name="ColorB">Default danmaku style</param>
-        /// <param name="enableAPCS">Enable auto prevent cover system</param>
-        public wpfDanmakulib(Canvas c, initCompleteHandler final, int Duration, int FontSize, bool Shadow, byte ColorR, byte ColorG, byte ColorB, bool enableAPCS)
+        /// <param name="wpfCanvas">A WPF Canvas for containing danmakus</param>
+        /// <param name="random">Use your own random seed or leave it null</param>
+        /// <param name="final">Call a method when wpfDanmakulib initialization completed or leave it null</param>
+        /// <param name="Duration">Danmaku stay duration (ms)</param>
+        /// <param name="FontSize">Danmaku font size</param>
+        /// <param name="Shadow">Danmaku Shadow Effect visibility</param>
+        /// <param name="ColorR">Danmaku color red value (0-255)</param>
+        /// <param name="ColorG">Danmaku color green value (0-255)</param>
+        /// <param name="ColorB">Danmaku color blue value (0-255)</param>
+        /// <param name="enableAPCS">APCS(Auto Prevent Cover System) is used for maintaining a row slot status list for solving danmaku occlusion issue. Disable APCS can save few system resource.</param>
+        public wpfDanmakulib(Canvas wpfCanvas, Random random = null, bool enableAPCS = true, initCompleteHandler final = null, int Duration = 9000, int FontSize = 30, bool Shadow = true, byte ColorR = 255, byte ColorG = 255, byte ColorB = 255)
         {
-            danmakuRender = c;
-            enablePreventCoverSystem = enableAPCS;
-
-            Canvas_Width = c.Width;
-            Canvas_Height = c.Height;
+            system_RenderCanvas = wpfCanvas;
+            if (random != null)
+            {
+                ra = random;
+            }
+            else
+            {
+                ra = new Random();
+            }
+            system_enableAPCS = enableAPCS;
 
             danmaku_Duration = Duration;
             danmaku_FontSize = FontSize;
@@ -74,25 +79,17 @@ namespace OhMyDanmaku
             danmaku_colorG = ColorG;
             danmaku_colorB = ColorB;
 
-            rowSystemInit();
-
-            if (enablePreventCoverSystem)
-            {
-                preventCoverInit();
-            }
-
-            //Complete
-            final();
+            libInit(final);
         }
 
         #region Danmaku
         /// <summary>
-        /// This is a completely automatic danmaku generater, using default construct method params. This methodonly available when APCS is enabled.
+        /// This is a completely automatic danmaku generater, create a danmaku in a random row slot with default construct method params. This method only available when APCS is enabled.
         /// </summary>
         /// <param name="text">Danmaku Content</param>
         public void generateDanmaku(string text)
         {
-            if (enablePreventCoverSystem)
+            if (system_enableAPCS)
             {
                 createDanmaku(
                     text,
@@ -157,10 +154,10 @@ namespace OhMyDanmaku
 
             _singleDanmaku.Loaded += delegate(object o, RoutedEventArgs e) { doAnimation(_singleDanmaku.Name, _duration, _targetRow); }; //add animation
 
-            danmakuRender.Children.Add(_singleDanmaku);
-            danmakuRender.RegisterName(_singleDanmaku.Name, _singleDanmaku);
+            system_RenderCanvas.Children.Add(_singleDanmaku);
+            system_RenderCanvas.RegisterName(_singleDanmaku.Name, _singleDanmaku);
 
-            if (enablePreventCoverSystem)
+            if (system_enableAPCS)
             {
                 lockRow(_targetRow);
             }
@@ -168,10 +165,10 @@ namespace OhMyDanmaku
 
         private void doAnimation(string _targetUniqueName, int _duration, int _row)
         {
-            TextBlock _targetDanmaku = danmakuRender.FindName(_targetUniqueName) as TextBlock;
+            TextBlock _targetDanmaku = system_RenderCanvas.FindName(_targetUniqueName) as TextBlock;
 
             double _danmakuWidth = _targetDanmaku.ActualWidth;
-            DoubleAnimation _doubleAnimation = new DoubleAnimation(Canvas_Width, -_danmakuWidth, new Duration(TimeSpan.FromMilliseconds(_duration)), FillBehavior.Stop);
+            DoubleAnimation _doubleAnimation = new DoubleAnimation(system_RenderCanvas.Width, -_danmakuWidth, new Duration(TimeSpan.FromMilliseconds(_duration)), FillBehavior.Stop);
 
             Storyboard _sb = new Storyboard();
             Storyboard.SetTarget(_doubleAnimation, _targetDanmaku);
@@ -185,14 +182,14 @@ namespace OhMyDanmaku
 
         private void removeOutdateDanmaku(string _targetUniqueName, int _row)
         {
-            TextBlock ready2remove = danmakuRender.FindName(_targetUniqueName) as TextBlock;
+            TextBlock ready2remove = system_RenderCanvas.FindName(_targetUniqueName) as TextBlock;
             if (ready2remove != null)
             {
-                danmakuRender.Children.Remove(ready2remove);
-                danmakuRender.UnregisterName(_targetUniqueName);
+                system_RenderCanvas.Children.Remove(ready2remove);
+                system_RenderCanvas.UnregisterName(_targetUniqueName);
                 ready2remove = null;
 
-                if (enablePreventCoverSystem)
+                if (system_enableAPCS)
                 {
                     unlockRow(_row);
                 }
@@ -205,7 +202,7 @@ namespace OhMyDanmaku
         #endregion
 
         #region Row system
-        private void rowSystemInit()
+        private void libInit(initCompleteHandler initCompleted)
         {
             //Create a test danmaku to calculate row
             TextBlock _testDanmaku = new TextBlock();
@@ -217,27 +214,35 @@ namespace OhMyDanmaku
 
             _testDanmaku.Loaded += delegate(object o, RoutedEventArgs e)
             {
-                calcRow(Canvas_Height, _testDanmaku.Name, _testDanmaku.ActualHeight);
+                calcRow(system_RenderCanvas.Height, _testDanmaku.Name, _testDanmaku.ActualHeight);
+                if (system_enableAPCS)
+                {
+                    preventCoverInit(initCompleted);
+                }
+                else
+                {
+                    initCompleted();
+                }
             };
 
-            danmakuRender.Children.Add(_testDanmaku);
-            danmakuRender.RegisterName(_testDanmaku.Name, _testDanmaku);
+            system_RenderCanvas.Children.Add(_testDanmaku);
+            system_RenderCanvas.RegisterName(_testDanmaku.Name, _testDanmaku);
         }
         private void calcRow(double _renderHeight, string _testTargetName, double _fontHeight)
         {
             //Remove the test danmaku
-            TextBlock _testtargetDanmaku = danmakuRender.FindName(_testTargetName) as TextBlock;
-            danmakuRender.Children.Remove(_testtargetDanmaku);
-            danmakuRender.UnregisterName(_testTargetName);
+            TextBlock _testtargetDanmaku = system_RenderCanvas.FindName(_testTargetName) as TextBlock;
+            system_RenderCanvas.Children.Remove(_testtargetDanmaku);
+            system_RenderCanvas.UnregisterName(_testTargetName);
 
-            //total Row
+            //total Row slots
             _maxRow = (int)(_renderHeight / _fontHeight);
 
             //Row Height
             manual_danmaku_rowHeight = (int)_fontHeight;
         }
         /// <summary>
-        /// Returns total row slot numbers, which generated by construct method with the params passd in
+        /// Returns total row slot numbers, generated by row slot manage system
         /// </summary>
         /// <returns></returns>
         public int getRowNumbers()
@@ -245,7 +250,7 @@ namespace OhMyDanmaku
             return _maxRow;
         }
         /// <summary>
-        /// Returns normal row slot height, which generated by construct method with the params passd in
+        /// Returns normal row slot height, generated by row slot manage system
         /// </summary>
         /// <returns></returns>
         public int getNormalRowHeight()
@@ -255,12 +260,17 @@ namespace OhMyDanmaku
         #endregion
 
         #region preventCover
-        private void preventCoverInit()
+        private void preventCoverInit(initCompleteHandler initCompleted)
         {
             _rowList = new bool[_maxRow]; //init a row list for recording row status
+            initCompleted();
         }
         private int getAvailableRow()
         {
+            if (!system_enableAPCS)
+            {
+                throw new InvalidOperationException("APCS is disabled");
+            }
             idleRows.Clear();
 
             for (int i = 0; i < _rowList.Length; i++)
@@ -286,11 +296,19 @@ namespace OhMyDanmaku
 
         private void lockRow(int _row)
         {
+            if (!system_enableAPCS)
+            {
+                throw new InvalidOperationException("APCS is disabled");
+            }
             _rowList[_row] = true;
         }
 
         private void unlockRow(int _row = -1)
         {
+            if (!system_enableAPCS)
+            {
+                throw new InvalidOperationException("APCS is disabled");
+            }
             if (_row == -1)
             {
                 _rowList = new bool[_maxRow];

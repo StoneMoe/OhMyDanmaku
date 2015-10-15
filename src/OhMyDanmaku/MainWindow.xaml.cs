@@ -18,23 +18,16 @@ namespace OhMyDanmaku
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region global
         Random ra = new Random();
-
-        Socket s;
-
-        Thread t;
-
+        Socket networkSocket;
+        Thread networkThread;
         Audit auditWindow = null;
-
         wpfDanmakulib lib;
 
         public double _SCREEN_WIDTH = SystemParameters.PrimaryScreenWidth;
         public double _SCREEN_HEIGHT = SystemParameters.PrimaryScreenHeight;
-
-        public int _maxRow;
-        bool[] _rowList;
-        int _system_danmaku_rowHeight;
-        ArrayList idleRows = new ArrayList();
+        #endregion
 
         public MainWindow()
         {
@@ -53,12 +46,12 @@ namespace OhMyDanmaku
         {
             Console.WriteLine("communication Thread is Starting..\r\nSocket Listen Port:" + GlobalVariable._user_com_port.ToString());
 
-            s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            networkSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             IPEndPoint ip = new IPEndPoint(IPAddress.Loopback, _port);
 
             byte[] buffer = new byte[2048];
 
-            s.Bind(ip);
+            networkSocket.Bind(ip);
 
             IPEndPoint client = new IPEndPoint(IPAddress.Any, 0);
             EndPoint remote = (EndPoint)client;
@@ -67,7 +60,7 @@ namespace OhMyDanmaku
             {
                 try
                 {
-                    int num = s.ReceiveFrom(buffer, ref remote);
+                    int num = networkSocket.ReceiveFrom(buffer, ref remote);
 
                     string recvmsg = System.Text.Encoding.UTF8.GetString(buffer, 0, num);
 
@@ -88,7 +81,7 @@ namespace OhMyDanmaku
                     }
                     else
                     {
-                        Thread temp = new Thread(() => sendDanmaku(recvmsg));
+                        Thread temp = new Thread(() => lib.generateDanmaku(recvmsg));
                         temp.IsBackground = true;
                         temp.Start();
                     }
@@ -106,8 +99,8 @@ namespace OhMyDanmaku
 
         private void shutdownNetworkComLoop()
         {
-            t.Abort();
-            s.Close();
+            networkThread.Abort();
+            networkSocket.Close();
         }
         #endregion
 
@@ -117,7 +110,17 @@ namespace OhMyDanmaku
         {
             setSize(GlobalVariable._RENDER_WIDTH, GlobalVariable._RENDER_HEIGHT);
 
-            lib = new wpfDanmakulib(ra, danmakuRender, InitCompleted);
+            lib = new wpfDanmakulib(
+                danmakuRender, 
+                InitCompleted, 
+                GlobalVariable._user_danmaku_Duration, 
+                GlobalVariable._user_danmaku_FontSize, 
+                GlobalVariable._user_danmaku_EnableShadow, 
+                GlobalVariable._user_danmaku_colorR, 
+                GlobalVariable._user_danmaku_colorG, 
+                GlobalVariable._user_danmaku_colorB, 
+                true
+                );
 
             if (GlobalVariable._user_audit)
             {
@@ -125,44 +128,29 @@ namespace OhMyDanmaku
                 auditWindow.Show();
             }
 
-            t = new Thread(() => networkComLoop(GlobalVariable._user_com_port, GlobalVariable._user_audit));
-            t.IsBackground = true;
-            t.Name = "CommunicationThread_" + getRandomString(5);
-            t.Start(); //Start listener thread
+            networkThread = new Thread(() => networkComLoop(GlobalVariable._user_com_port, GlobalVariable._user_audit));
+            networkThread.IsBackground = true;
+            networkThread.Name = "CommunicationThread";
+            networkThread.Start(); //Start listener thread
         }
 
         private void InitCompleted()
         {
             //Do sth after init
-            lib.createDanmaku("OhMyDanmaku 初始化完毕", 0, lib._system_danmaku_rowHeight, GlobalVariable._user_danmaku_FontSize, GlobalVariable._user_danmaku_Duration, GlobalVariable._user_danmaku_colorR, GlobalVariable._user_danmaku_colorG, GlobalVariable._user_danmaku_colorB, GlobalVariable._user_danmaku_EnableShadow);
-            lib.createDanmaku("OhMyDanmaku Initialization Complete", 1, lib._system_danmaku_rowHeight, GlobalVariable._user_danmaku_FontSize, GlobalVariable._user_danmaku_Duration, GlobalVariable._user_danmaku_colorR, GlobalVariable._user_danmaku_colorG, GlobalVariable._user_danmaku_colorB, GlobalVariable._user_danmaku_EnableShadow);
+            lib.createDanmaku("OhMyDanmaku 初始化完毕", 0, lib.getNormalRowHeight(), GlobalVariable._user_danmaku_FontSize, GlobalVariable._user_danmaku_Duration, GlobalVariable._user_danmaku_colorR, GlobalVariable._user_danmaku_colorG, GlobalVariable._user_danmaku_colorB, GlobalVariable._user_danmaku_EnableShadow);
+            lib.createDanmaku("OhMyDanmaku Initialization Complete", 1, lib.getNormalRowHeight(), GlobalVariable._user_danmaku_FontSize, GlobalVariable._user_danmaku_Duration, GlobalVariable._user_danmaku_colorR, GlobalVariable._user_danmaku_colorG, GlobalVariable._user_danmaku_colorB, GlobalVariable._user_danmaku_EnableShadow);
         }
 
-        public void sendDanmaku(string _content)
+        public void sendDanmaku(string msg)
         {
-            int row = lib.getAvailableRow();
-            this.Dispatcher.Invoke(new Action(() =>
-            {
-                lib.createDanmaku(
-                    _content,
-                    row,
-                    lib._system_danmaku_rowHeight,
-                    GlobalVariable._user_danmaku_FontSize,
-                    GlobalVariable._user_danmaku_Duration,
-                    GlobalVariable._user_danmaku_colorR,
-                    GlobalVariable._user_danmaku_colorG,
-                    GlobalVariable._user_danmaku_colorB,
-                    GlobalVariable._user_danmaku_EnableShadow
-                    );
-            }));
-
+            lib.generateDanmaku(msg);
         }
 
         #endregion
 
         #region Events
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void Setting_Click(object sender, RoutedEventArgs e)
         {
             shutdownNetworkComLoop();
 
@@ -181,22 +169,14 @@ namespace OhMyDanmaku
 
         private void visualBorder_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            this.DragMove();
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                this.DragMove();
+            }
         }
         #endregion
 
         #region LittleHelpers
-
-        private string getRandomString(int _Length)
-        {
-            string _strList = "qwertyuioplkjhgfdsazxcvbnm1234567890";
-            string _buffer = "";
-            for (int i = 1; i <= _Length; i++)
-            {
-                _buffer += _strList[ra.Next(0, 35)];
-            }
-            return _buffer;
-        }
 
         private void setSize(double _width, double _height)
         {

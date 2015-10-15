@@ -1,5 +1,8 @@
 ﻿namespace OhMyDanmaku
 {
+    /// <summary>
+    /// User Settings Storage
+    /// </summary>
     class GlobalVariable
     {
         //Render - User Settings

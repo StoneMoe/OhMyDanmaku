@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
@@ -14,27 +10,32 @@ namespace OhMyDanmaku
 {
     class wpfDanmakulib
     {
-        
-        public wpfDanmakulib(Random r, Canvas c, initCompleteHandler h)
-        {
-            ra = r;
-            danmakuRender = c;
-
-            preventCoverInit(GlobalVariable._RENDER_HEIGHT, GlobalVariable._user_danmaku_FontSize, h);
-            //init prevent cover system
-        }
-
-        #region global
-        public delegate void initCompleteHandler();
-        Random ra;
-        Canvas danmakuRender;
-        public int _maxRow;
-        bool[] _rowList;
-        public int _system_danmaku_rowHeight;
-        ArrayList idleRows = new ArrayList();
-        #endregion
-
         #region general
+        //Init
+        private Random ra = new Random();
+        private Canvas danmakuRender;
+        private bool enablePreventCoverSystem;
+        public delegate void initCompleteHandler();
+        private double Canvas_Width;
+        private double Canvas_Height;
+
+        //Danmaku Style Config
+        private int danmaku_Duration;
+        private int danmaku_FontSize;
+        private bool danmaku_EnableShadow;
+        private byte danmaku_colorR;
+        private byte danmaku_colorG;
+        private byte danmaku_colorB;
+
+        //row system
+        private int _maxRow;
+        private int manual_danmaku_rowHeight;
+
+        //Auto Prevent Cover System
+        private bool[] _rowList;
+        private ArrayList idleRows = new ArrayList();
+
+        //Helper
         private string getRandomString(int _Length)
         {
             string _strList = "qwertyuioplkjhgfdsazxcvbnm1234567890";
@@ -46,8 +47,82 @@ namespace OhMyDanmaku
             return _buffer;
         }
         #endregion
-        #region Danmaku
+        /// <summary>
+        /// wpfDanmakulib initialization Entry point
+        /// </summary>
+        /// <param name="c">A WPF Canvas for generating danmaku</param>
+        /// <param name="final">Delegate a method when wpfDanmakulib initialization completed</param>
+        /// <param name="Duration">Default danmaku style</param>
+        /// <param name="FontSize">Default danmaku style</param>
+        /// <param name="Shadow">Default danmaku style</param>
+        /// <param name="ColorR">Default danmaku style</param>
+        /// <param name="ColorG">Default danmaku style</param>
+        /// <param name="ColorB">Default danmaku style</param>
+        /// <param name="enableAPCS">Enable auto prevent cover system</param>
+        public wpfDanmakulib(Canvas c, initCompleteHandler final, int Duration, int FontSize, bool Shadow, byte ColorR, byte ColorG, byte ColorB, bool enableAPCS)
+        {
+            danmakuRender = c;
+            enablePreventCoverSystem = enableAPCS;
 
+            Canvas_Width = c.Width;
+            Canvas_Height = c.Height;
+
+            danmaku_Duration = Duration;
+            danmaku_FontSize = FontSize;
+            danmaku_EnableShadow = Shadow;
+            danmaku_colorR = ColorR;
+            danmaku_colorG = ColorG;
+            danmaku_colorB = ColorB;
+
+            rowSystemInit();
+
+            if (enablePreventCoverSystem)
+            {
+                preventCoverInit();
+            }
+
+            //Complete
+            final();
+        }
+
+        #region Danmaku
+        /// <summary>
+        /// This is a completely automatic danmaku generater, using default construct method params. This methodonly available when APCS is enabled.
+        /// </summary>
+        /// <param name="text">Danmaku Content</param>
+        public void generateDanmaku(string text)
+        {
+            if (enablePreventCoverSystem)
+            {
+                createDanmaku(
+                    text,
+                    getAvailableRow(),
+                    manual_danmaku_rowHeight,
+                    danmaku_FontSize,
+                    danmaku_Duration,
+                    danmaku_colorR,
+                    danmaku_colorG,
+                    danmaku_colorB,
+                    danmaku_EnableShadow
+                    );
+            }
+            else
+            {
+                throw new InvalidOperationException("APCS is disabled");
+            }
+        }
+        /// <summary>
+        /// Create a danmaku manually, instead of using default construct method params.
+        /// </summary>
+        /// <param name="_content">Danmaku Content</param>
+        /// <param name="_targetRow">Target row slot, check "getRowNumbers" method</param>
+        /// <param name="_rowHeight">Row slot height, check "getNormalRowHeight" method</param>
+        /// <param name="_fontSize">Danmaku font size</param>
+        /// <param name="_duration">Danmaku stay duration cross the render area</param>
+        /// <param name="_R">Danmaku color red</param>
+        /// <param name="_G">Danmaku color green</param>
+        /// <param name="_B">Danmaku color blue</param>
+        /// <param name="_enableShadow">Danmaku shadow</param>
         public void createDanmaku(string _content, int _targetRow, int _rowHeight, int _fontSize, int _duration, byte _R, byte _G, byte _B, bool _enableShadow) //_targetRow counting from zero
         {
             TextBlock _singleDanmaku = new TextBlock();
@@ -57,9 +132,8 @@ namespace OhMyDanmaku
             _singleDanmaku.Name = "uni_" + getRandomString(ra.Next(5, 8));
             _singleDanmaku.FontSize = _fontSize;
             _singleDanmaku.SetValue(Canvas.TopProperty, (double)_targetRow * _rowHeight);
-            _singleDanmaku.Foreground = new SolidColorBrush(Color.FromRgb(_R, _G, _B)); //Color
+            _singleDanmaku.Foreground = new SolidColorBrush(Color.FromRgb(_R, _G, _B));
 
-            //Shadow
             if (_enableShadow == true)
             {
                 DropShadowEffect _ef = new DropShadowEffect();
@@ -86,8 +160,10 @@ namespace OhMyDanmaku
             danmakuRender.Children.Add(_singleDanmaku);
             danmakuRender.RegisterName(_singleDanmaku.Name, _singleDanmaku);
 
-            //Lock this row
-            lockRow(_targetRow);
+            if (enablePreventCoverSystem)
+            {
+                lockRow(_targetRow);
+            }
         }
 
         private void doAnimation(string _targetUniqueName, int _duration, int _row)
@@ -95,7 +171,7 @@ namespace OhMyDanmaku
             TextBlock _targetDanmaku = danmakuRender.FindName(_targetUniqueName) as TextBlock;
 
             double _danmakuWidth = _targetDanmaku.ActualWidth;
-            DoubleAnimation _doubleAnimation = new DoubleAnimation(GlobalVariable._RENDER_WIDTH, -_danmakuWidth, new Duration(TimeSpan.FromMilliseconds(_duration)), FillBehavior.Stop);
+            DoubleAnimation _doubleAnimation = new DoubleAnimation(Canvas_Width, -_danmakuWidth, new Duration(TimeSpan.FromMilliseconds(_duration)), FillBehavior.Stop);
 
             Storyboard _sb = new Storyboard();
             Storyboard.SetTarget(_doubleAnimation, _targetDanmaku);
@@ -116,8 +192,10 @@ namespace OhMyDanmaku
                 danmakuRender.UnregisterName(_targetUniqueName);
                 ready2remove = null;
 
-                //Unlock this row
-                unlockRow(_row);
+                if (enablePreventCoverSystem)
+                {
+                    unlockRow(_row);
+                }
             }
             else
             {
@@ -126,24 +204,25 @@ namespace OhMyDanmaku
         }
         #endregion
 
-        #region PreventCover
-
-        private void preventCoverInit(double _renderHeight, double _fontSize, initCompleteHandler h)
+        #region Row system
+        private void rowSystemInit()
         {
-            //Create a test danmaku
+            //Create a test danmaku to calculate row
             TextBlock _testDanmaku = new TextBlock();
 
             _testDanmaku.Text = "OhMyDanmaku";
             _testDanmaku.FontFamily = (FontFamily)new FontFamilyConverter().ConvertFromString("Microsoft YaHei");
             _testDanmaku.Name = "uni_testheight";
-            _testDanmaku.FontSize = _fontSize;
+            _testDanmaku.FontSize = danmaku_FontSize;
 
-            _testDanmaku.Loaded += delegate(object o, RoutedEventArgs e) { calcRow(_renderHeight, _testDanmaku.Name, _testDanmaku.ActualHeight); h(); };
+            _testDanmaku.Loaded += delegate(object o, RoutedEventArgs e)
+            {
+                calcRow(Canvas_Height, _testDanmaku.Name, _testDanmaku.ActualHeight);
+            };
 
             danmakuRender.Children.Add(_testDanmaku);
             danmakuRender.RegisterName(_testDanmaku.Name, _testDanmaku);
         }
-
         private void calcRow(double _renderHeight, string _testTargetName, double _fontHeight)
         {
             //Remove the test danmaku
@@ -151,17 +230,36 @@ namespace OhMyDanmaku
             danmakuRender.Children.Remove(_testtargetDanmaku);
             danmakuRender.UnregisterName(_testTargetName);
 
-            //get RowNumbers
+            //total Row
             _maxRow = (int)(_renderHeight / _fontHeight);
 
-            //get a row list
-            _rowList = new bool[_maxRow];
-
-            //get RowHeight
-            _system_danmaku_rowHeight = (int)_fontHeight;
+            //Row Height
+            manual_danmaku_rowHeight = (int)_fontHeight;
         }
+        /// <summary>
+        /// Returns total row slot numbers, which generated by construct method with the params passd in
+        /// </summary>
+        /// <returns></returns>
+        public int getRowNumbers()
+        {
+            return _maxRow;
+        }
+        /// <summary>
+        /// Returns normal row slot height, which generated by construct method with the params passd in
+        /// </summary>
+        /// <returns></returns>
+        public int getNormalRowHeight()
+        {
+            return manual_danmaku_rowHeight;
+        }
+        #endregion
 
-        public int getAvailableRow()
+        #region preventCover
+        private void preventCoverInit()
+        {
+            _rowList = new bool[_maxRow]; //init a row list for recording row status
+        }
+        private int getAvailableRow()
         {
             idleRows.Clear();
 
@@ -203,6 +301,5 @@ namespace OhMyDanmaku
             }
         }
         #endregion
-
     }
 }

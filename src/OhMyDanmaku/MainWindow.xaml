@@ -1,7 +1,7 @@
 ﻿<Window x:Name="renderWindow" x:Class="OhMyDanmaku.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="OhMyDanmaku" Height="1080" Width="1920" Background="{x:Null}" ResizeMode="NoResize" Topmost="True" WindowStartupLocation="CenterScreen" Foreground="Black" AllowsTransparency="True" WindowStyle="None">
+        Title="OhMyDanmaku" Height="1080" Width="1920" Background="{x:Null}" ResizeMode="NoResize" Topmost="True" WindowStartupLocation="CenterScreen" Foreground="Black" AllowsTransparency="True" WindowStyle="None" Closing="renderWindow_Closing">
     <Canvas x:Name="danmakuRender">
         <Border x:Name="visualBorder" BorderThickness="4" Width="1920" Height="1080" BorderBrush="Red" MouseLeftButtonDown="visualBorder_MouseLeftButtonDown" Panel.ZIndex="3" Opacity="0.3"/>
         <Button x:Name="settingButton" Content="Setting" Canvas.Top="10" Canvas.Left="10" Height="20" Click="Setting_Click" FontSize="6"/>

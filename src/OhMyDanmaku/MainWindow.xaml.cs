@@ -175,6 +175,14 @@ namespace OhMyDanmaku
                 this.DragMove();
             }
         }
+
+        private void renderWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (auditWindow != null)
+            {
+                auditWindow.Close();
+            }
+        }
         #endregion
 
         #region LittleHelpers

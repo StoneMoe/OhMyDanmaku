@@ -50,6 +50,12 @@ namespace OhMyDanmaku
         {
             getADanmaku();
         }
+        private void dropAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            AuditList.Items.Clear();
+            currentDanmaku.Text = "";
+            setButtons(false);
+        }
         #endregion
 
         #region Helpers
@@ -71,7 +77,10 @@ namespace OhMyDanmaku
         {
             passButton.IsEnabled = on;
             dropButton.IsEnabled = on;
+            dropAllButton.IsEnabled = on;
         }
         #endregion
+
+
     }
 }

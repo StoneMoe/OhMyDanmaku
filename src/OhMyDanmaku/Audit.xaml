@@ -7,5 +7,6 @@
         <TextBlock x:Name="currentDanmaku" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Margin="10,195,0,0" Height="68" Width="472" TextAlignment="Center" Foreground="White"/>
         <Button x:Name="passButton" Content="Pass" HorizontalAlignment="Left" Height="64" Margin="10,268,0,0" VerticalAlignment="Top" Width="229" FontSize="15" Background="#FF00CC66" BorderBrush="{x:Null}" Foreground="White" Click="passButton_Click"/>
         <Button x:Name="dropButton" Content="Drop" Height="64" Margin="253,268,10,0" VerticalAlignment="Top" FontSize="15" Background="#FFFF3333" BorderBrush="{x:Null}" Foreground="White" Click="dropButton_Click"/>
+        <Button x:Name="dropAllButton" Content="Drop ALL" Height="27" Margin="253,236,10,0" VerticalAlignment="Top" FontSize="15" Background="#FFFF3333" BorderBrush="{x:Null}" Foreground="White" Click="dropAllButton_Click"/>
     </Grid>
 </Window>

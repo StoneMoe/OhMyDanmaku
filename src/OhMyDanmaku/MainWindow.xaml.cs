@@ -217,5 +217,32 @@ namespace OhMyDanmaku
         }
 
         #endregion
+        private string getRandomString(int _Length)
+        {
+            string _strList = "qwertyuioplkjhgfdsazxcvbnm1234567890";
+            string _buffer = "";
+            for (int i = 1; i <= _Length; i++)
+            {
+                _buffer += _strList[ra.Next(0, 35)];
+            }
+            return _buffer;
+        }
+        private void pressureButton_Click(object sender, RoutedEventArgs e)
+        {
+            Thread test = new Thread(() =>
+            {
+            for (int i = 0; i < 500; i++)
+            {
+                Thread.Sleep(500);
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                    sendDanmaku(getRandomString(20)); 
+                }));
+                   
+                }
+            });
+            test.IsBackground = true;
+            test.Start();
+        }
     }
 }

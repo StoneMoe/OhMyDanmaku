@@ -205,7 +205,7 @@ namespace OhMyDanmaku
 
             GlobalVariable._user_danmaku_FontSize = 30;
             GlobalVariable._user_danmaku_Duration = 9000;
-            GlobalVariable._user_danmaku_EnableShadow = true;
+            GlobalVariable._user_danmaku_EnableShadow = false;
 
             GlobalVariable._user_danmaku_colorR = 255;
             GlobalVariable._user_danmaku_colorG = 255;

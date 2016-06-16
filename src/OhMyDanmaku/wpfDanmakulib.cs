@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -122,14 +123,17 @@ namespace OhMyDanmaku
         /// <param name="_enableShadow">Danmaku shadow</param>
         public void createDanmaku(string _content, int _targetRow, int _rowHeight, int _fontSize, int _duration, byte _R, byte _G, byte _B, bool _enableShadow) //_targetRow counting from zero
         {
-            TextBlock _singleDanmaku = new TextBlock();
+
+            OutlinedTextBlock _singleDanmaku = new OutlinedTextBlock();
 
             _singleDanmaku.Text = _content;
             _singleDanmaku.FontFamily = (FontFamily)new FontFamilyConverter().ConvertFromString("Microsoft YaHei");
             _singleDanmaku.Name = "uni_" + getRandomString(ra.Next(5, 8));
             _singleDanmaku.FontSize = _fontSize;
             _singleDanmaku.SetValue(Canvas.TopProperty, (double)_targetRow * _rowHeight);
-            _singleDanmaku.Foreground = new SolidColorBrush(Color.FromRgb(_R, _G, _B));
+            _singleDanmaku.Fill = new SolidColorBrush(Color.FromRgb(_R, _G, _B));
+            _singleDanmaku.CacheMode = new BitmapCache();
+            _singleDanmaku.FontWeight = FontWeights.Bold;
 
             if (_enableShadow == true)
             {
@@ -165,7 +169,7 @@ namespace OhMyDanmaku
 
         private void doAnimation(string _targetUniqueName, int _duration, int _row)
         {
-            TextBlock _targetDanmaku = system_RenderCanvas.FindName(_targetUniqueName) as TextBlock;
+            OutlinedTextBlock _targetDanmaku = system_RenderCanvas.FindName(_targetUniqueName) as OutlinedTextBlock;
 
             double _danmakuWidth = _targetDanmaku.ActualWidth;
             DoubleAnimation _doubleAnimation = new DoubleAnimation(system_RenderCanvas.Width, -_danmakuWidth, new Duration(TimeSpan.FromMilliseconds(_duration)), FillBehavior.Stop);
@@ -182,7 +186,7 @@ namespace OhMyDanmaku
 
         private void removeOutdateDanmaku(string _targetUniqueName, int _row)
         {
-            TextBlock ready2remove = system_RenderCanvas.FindName(_targetUniqueName) as TextBlock;
+            OutlinedTextBlock ready2remove = system_RenderCanvas.FindName(_targetUniqueName) as OutlinedTextBlock;
             if (ready2remove != null)
             {
                 system_RenderCanvas.Children.Remove(ready2remove);
@@ -204,13 +208,16 @@ namespace OhMyDanmaku
         #region Row system
         private void libInit(initCompleteHandler initCompleted)
         {
-            //Create a test danmaku to calculate row
-            TextBlock _testDanmaku = new TextBlock();
+            //FormattedText ft = new FormattedText("OhMyDanmaku", CultureInfo.GetCultureInfo("zh-cn"), FlowDirection.LeftToRight, new Typeface("Microsoft YaHei"), danmaku_FontSize, Brushes.Black);
+
+            // Create a test danmaku to calculate row
+            OutlinedTextBlock _testDanmaku = new OutlinedTextBlock();
 
             _testDanmaku.Text = "OhMyDanmaku";
             _testDanmaku.FontFamily = (FontFamily)new FontFamilyConverter().ConvertFromString("Microsoft YaHei");
             _testDanmaku.Name = "uni_testheight";
             _testDanmaku.FontSize = danmaku_FontSize;
+            _testDanmaku.FontWeight = FontWeights.Bold;
 
             _testDanmaku.Loaded += delegate(object o, RoutedEventArgs e)
             {
@@ -231,7 +238,7 @@ namespace OhMyDanmaku
         private void calcRow(double _renderHeight, string _testTargetName, double _fontHeight)
         {
             //Remove the test danmaku
-            TextBlock _testtargetDanmaku = system_RenderCanvas.FindName(_testTargetName) as TextBlock;
+            OutlinedTextBlock _testtargetDanmaku = system_RenderCanvas.FindName(_testTargetName) as OutlinedTextBlock;
             system_RenderCanvas.Children.Remove(_testtargetDanmaku);
             system_RenderCanvas.UnregisterName(_testTargetName);
 
@@ -287,11 +294,11 @@ namespace OhMyDanmaku
                 Console.WriteLine("Unlock all rows.");
                 unlockRow();
 
-                return ra.Next(0, _maxRow + 1);
+                return ra.Next(0, _maxRow - 1);
             }
             else
             {
-                return (int)idleRows[ra.Next(0, idleRows.Count)];
+                return (int)idleRows[ra.Next(0, idleRows.Count - 1)];
             }
         }
 

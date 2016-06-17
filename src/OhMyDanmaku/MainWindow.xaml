@@ -4,7 +4,8 @@
         Title="OhMyDanmaku" Height="1080" Width="1920" Background="{x:Null}" ResizeMode="NoResize" Topmost="True" WindowStartupLocation="CenterScreen" Foreground="Black" AllowsTransparency="True" WindowStyle="None" Closing="renderWindow_Closing">
     <Canvas x:Name="danmakuRender">
         <Border x:Name="visualBorder" BorderThickness="4" Width="1920" Height="1080" BorderBrush="Red" MouseLeftButtonDown="visualBorder_MouseLeftButtonDown" Panel.ZIndex="3" Opacity="0.3"/>
-        <Button x:Name="settingButton" Content="Setting" Canvas.Top="10" Canvas.Left="10" Height="20" Click="Setting_Click" FontSize="6"/>
-        <Button x:Name="pressureButton" Content="Setting" Canvas.Top="10" Canvas.Left="30" Height="20" FontSize="6" Click="pressureButton_Click"/>
+        <Button x:Name="settingButton" Content="Setting" Canvas.Top="10" Canvas.Left="10" Height="30" Click="Setting_Click" FontSize="15" Width="76"/>
+        <Button x:Name="pressureButton" Content="Test" Canvas.Top="10" Canvas.Left="91" Height="30" FontSize="15" Click="pressureButton_Click" Width="76"/>
+        <Button x:Name="HideButton" Content="Hide" Canvas.Top="10" Canvas.Left="172" Height="30" FontSize="15" Width="76" Click="HideButton_Click"/>
     </Canvas>
 </Window>

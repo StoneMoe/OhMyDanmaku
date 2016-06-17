@@ -175,6 +175,24 @@ namespace OhMyDanmaku
                 auditWindow.Close();
             }
         }
+
+        private void pressureButton_Click(object sender, RoutedEventArgs e)
+        {
+            Thread test = new Thread(() =>
+            {
+                for (int i = 0; i < 50; i++)
+                {
+                    Thread.Sleep(500);
+                    this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        sendDanmaku(getRandomString(20));
+                    }));
+
+                }
+            });
+            test.IsBackground = true;
+            test.Start();
+        }
         #endregion
 
         #region LittleHelpers
@@ -193,9 +211,13 @@ namespace OhMyDanmaku
             visualBorder.Height = _height;
             visualBorder.Width = _width;
 
-            //Setting Button postion
+            //Buttons postion
             settingButton.SetValue(Canvas.TopProperty, (double)0);
-            settingButton.SetValue(Canvas.LeftProperty, (double)0);
+
+            pressureButton.SetValue(Canvas.TopProperty, (double)0);
+
+            HideButton.SetValue(Canvas.TopProperty, (double)0);
+
         }
 
         public void loadDefaultConfig()
@@ -216,7 +238,6 @@ namespace OhMyDanmaku
             GlobalVariable._user_audit = false;
         }
 
-        #endregion
         private string getRandomString(int _Length)
         {
             string _strList = "qwertyuioplkjhgfdsazxcvbnm1234567890";
@@ -227,22 +248,15 @@ namespace OhMyDanmaku
             }
             return _buffer;
         }
-        private void pressureButton_Click(object sender, RoutedEventArgs e)
+
+        #endregion
+
+        private void HideButton_Click(object sender, RoutedEventArgs e)
         {
-            Thread test = new Thread(() =>
-            {
-            for (int i = 0; i < 500; i++)
-            {
-                Thread.Sleep(500);
-                this.Dispatcher.Invoke(new Action(() =>
-                {
-                    sendDanmaku(getRandomString(20)); 
-                }));
-                   
-                }
-            });
-            test.IsBackground = true;
-            test.Start();
+            visualBorder.Visibility = Visibility.Hidden;
+            settingButton.Visibility = Visibility.Hidden;
+            pressureButton.Visibility = Visibility.Hidden;
+            HideButton.Visibility = Visibility.Hidden;
         }
     }
 }

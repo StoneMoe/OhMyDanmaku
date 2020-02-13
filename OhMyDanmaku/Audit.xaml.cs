@@ -43,7 +43,7 @@ namespace OhMyDanmaku
 
         private void passButton_Click(object sender, RoutedEventArgs e)
         {
-            mw.sendDanmaku(currentDanmaku.Text);
+            mw.engine.DrawDanmaku(currentDanmaku.Text);
             getADanmaku();
         }
         private void dropButton_Click(object sender, RoutedEventArgs e)

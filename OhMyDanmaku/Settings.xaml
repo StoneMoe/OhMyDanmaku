@@ -8,7 +8,8 @@
         <Button Content="Apply" Margin="13,0,13,10" VerticalAlignment="Bottom" Click="Button_Click" Height="22"/>
         <Label Content="Render Size" HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top"/>
         <Label Content="Duration" HorizontalAlignment="Left" Margin="10,102,0,0" VerticalAlignment="Top"/>
-        <CheckBox x:Name="danmaku_shadow" Content="Enable Danmaku Shadow" HorizontalAlignment="Left" Margin="10,171,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="danmaku_shadow" Content="Enable Shadow" HorizontalAlignment="Left" Margin="10,171,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="danmaku_outline" Content="Enable Outline" HorizontalAlignment="Left" Margin="154,171,0,0" VerticalAlignment="Top"/>
         <Label Content="Display" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" FontSize="25" Foreground="#FF919191"/>
         <TextBox x:Name="render_width" HorizontalAlignment="Left" Height="20" Margin="109,46,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="66"/>
         <Label Content="x" HorizontalAlignment="Left" Margin="180,42,0,0" VerticalAlignment="Top"/>

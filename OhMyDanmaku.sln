@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OhMyDanmaku", "OhMyDanmaku\OhMyDanmaku.csproj", "{094BC10C-0622-496D-90A4-0D0F65B5FECB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFDanmakuLib", "lib\WPFDanmakuLib\WPFDanmakuLib", "{D1E5F30F-472F-4B3E-9DD6-BCC18C9C516E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFDanmakuLib", "lib\WPFDanmakuLib\WPFDanmakuLib\WPFDanmakuLib.csproj", "{D1E5F30F-472F-4B3E-9DD6-BCC18C9C516E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {913A92CE-6AAA-467D-999A-450931429186}
 	EndGlobalSection
 EndGlobal

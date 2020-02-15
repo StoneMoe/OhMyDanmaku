@@ -42,41 +42,34 @@ namespace OhMyDanmaku {
 
             networkSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             IPEndPoint ip = new IPEndPoint(IPAddress.Loopback, _port);
-
-            byte[] buffer = new byte[102400];
-            int dataLength;
             networkSocket.Bind(ip);
 
-            IPEndPoint client = new IPEndPoint(IPAddress.Any, 0);
-            EndPoint remote = (EndPoint)client;
+            byte[] buf = new byte[102400];
+            int bufLength;
+
+            EndPoint remote = new IPEndPoint(IPAddress.Any, 0);
 
             while (true) {
                 try {
-                    dataLength = networkSocket.ReceiveFrom(buffer, ref remote);
+                    bufLength = networkSocket.ReceiveFrom(buf, ref remote);
+                    Console.WriteLine(buf.Length);
 
-                    Thread temp = new Thread(() => { msgHandler(buffer, dataLength, audit); });
-                    temp.IsBackground = true;
-                    temp.Start();
+                    string msg = System.Text.Encoding.UTF8.GetString(buf, 0, bufLength).Replace("\\", "\\\\").Trim();
+                    if (msg == string.Empty) {
+                        return;
+                    }
 
-                    remote = (EndPoint)client;
+                    if (audit) {
+                        auditWindow.addToAuditList(msg);
+                    } else {
+                        this.Dispatcher.Invoke(new Action(() => engine.DrawDanmaku(msg)));
+                    }
+
                 } catch (ThreadAbortException) {
                     Console.WriteLine("Communication Thread is shutting down..");
                 } catch (Exception e) {
                     Console.WriteLine("Unknown Exception: \r\n" + e.ToString());
                 }
-            }
-        }
-
-        private void msgHandler(byte[] buffer, int bufferLength, bool audit) {
-            string msg = System.Text.Encoding.UTF8.GetString(buffer, 0, bufferLength).Replace("\\", "\\\\").Trim();
-            if (msg == string.Empty) {
-                return;
-            }
-
-            if (audit) {
-                auditWindow.addToAuditList(msg);
-            } else {
-                this.Dispatcher.Invoke(new Action(() => engine.DrawDanmaku(msg)));
             }
         }
         #endregion

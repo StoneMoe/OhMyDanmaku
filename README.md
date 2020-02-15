@@ -1,7 +1,16 @@
-# OhMyDanmaku
-A Simple Desktop Danmaku System
+![](img/logo.png)
 
-# Get Started
+# Feature
+### Settings for danmaku style, network, and auditing.
+![](img/settings.png)
+
+### Realtime auditing
+![](img/audit.png)
+
+# Download
+You can download compiled binary file from [Releases](https://github.com/StoneMoe/OhMyDanmaku/releases)
+
+# Build from source
 ### Clone
 ```
 git clone https://github.com/StoneMoe/OhMyDanmaku.git
@@ -11,7 +20,7 @@ git submodule update
 ```
 
 ### Build
-OhMyDanmaku is based on WPF, which means you need .NET Framework 3.5 or higher.
+Use Visual Studio
 
 ### How to Send Danmaku
 OhMyDanmaku listen on `localhost:8585` with `UDP` by default.
@@ -20,12 +29,5 @@ Send string data in **UTF-8** to listener, then a danmaku will across screen lik
 
 Also, you can use reverse proxy to handle the communication, there is a sample in folder `web`
 
-# Customize
-Danmaku style(color,size,time,etc..) and listen port can change in setting menu very easily
-
-Or just modify the code for more :)
-
-# Welcome Pull requests and Issues.
-
 # License
-GPL v2
+### GPL v2
